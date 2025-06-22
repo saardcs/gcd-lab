@@ -1,6 +1,8 @@
 import streamlit as st
 import random
 import math
+import qrcode
+import io
 
 # --------------------------
 # Setup: Problem List
@@ -18,8 +20,19 @@ if "shuffled_problems" not in st.session_state:
 
 # --------------------------
 # Header
-st.title("💡 GCD Practice")
+st.title("💡 GCD Lab")
 st.markdown("Type the GCD of the number pair shown. Get instant feedback and move to the next!")
+
+# Sidebar with QR code
+st.sidebar.header("Scan This QR Code to View Menu Online")
+
+qr_link = "https://gcd-lab.streamlit.app"
+qr = qrcode.make(qr_link)
+buf = io.BytesIO()
+qr.save(buf)
+buf.seek(0)
+
+st.sidebar.image(buf, width=300, caption=qr_link)
 
 # --------------------------
 # Problem Display
