@@ -19,6 +19,21 @@ if "shuffled_problems" not in st.session_state:
     st.session_state.score = 0
 
 # --------------------------
+# Suggest Method Hint
+def suggest_method(a, b):
+    diff = abs(a - b)
+    smaller = min(a, b)
+    larger = max(a, b)
+
+    # Heuristic for suggesting method
+    if smaller < 20 or larger < 50:
+        return "Try using **Prime Factorization**."
+    elif diff < 15:
+        return "Hint: Try **Euclidean Subtraction** method."
+    else:
+        return "Hint: Use the **Euclidean Division** method."
+
+# --------------------------
 # Header
 st.title("💡 GCD Lab")
 st.markdown("Type the GCD of the number pair shown. Get instant feedback and move to the next!")
@@ -40,6 +55,8 @@ if st.session_state.index < len(st.session_state.shuffled_problems):
     a, b = st.session_state.shuffled_problems[st.session_state.index]
     st.subheader(f"🔢 Problem {st.session_state.index + 1} of {len(st.session_state.shuffled_problems)}")
     st.write(f"What is the GCD of **{a} and {b}**?")
+
+    st.info(suggest_method(a, b))  # 👈 Hint display
 
     user_answer = st.number_input("Your answer:", min_value=1, step=1, key="input")
 
