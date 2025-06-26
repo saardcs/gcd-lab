@@ -5,33 +5,39 @@ import qrcode
 import io
 
 # --------------------------
-# Setup: Problem List
+# Fixed Problem Set by Method
 problems = [
-    (18, 30), (45, 75), (105, 70), (24, 36),
-    (91, 65), (84, 36), (40, 60), (21, 63),
-    (128, 96), (14, 49)
+    # Prime Factorization
+    (18, 30), (24, 36), (40, 60),
+
+    # Euclidean Subtraction
+    (21, 63), (14, 49), (84, 36),
+
+    # Euclidean Division
+    (105, 70), (128, 96), (91, 65),
+
+    # Any Method
+    (45, 75)
 ]
 
-# Shuffle once at session start
-if "shuffled_problems" not in st.session_state:
-    st.session_state.shuffled_problems = random.sample(problems, len(problems))
+# --------------------------
+# Session State Initialization (no shuffle)
+if "index" not in st.session_state:
     st.session_state.index = 0
     st.session_state.score = 0
 
 # --------------------------
 # Suggest Method Hint
 def suggest_method(a, b):
-    diff = abs(a - b)
-    smaller = min(a, b)
-    larger = max(a, b)
-
-    # Heuristic for suggesting method
-    if smaller < 20 or larger < 50:
+    idx = st.session_state.index
+    if idx <= 2:
         return "Try using **Prime Factorization**."
-    elif diff < 15:
+    elif idx <= 5:
         return "Hint: Try **Euclidean Subtraction** method."
-    else:
+    elif idx <= 8:
         return "Hint: Use the **Euclidean Division** method."
+    else:
+        return "Use **any method** you like."
 
 # --------------------------
 # Header
@@ -51,9 +57,9 @@ st.sidebar.image(buf, width=300, caption=qr_link)
 
 # --------------------------
 # Problem Display
-if st.session_state.index < len(st.session_state.shuffled_problems):
-    a, b = st.session_state.shuffled_problems[st.session_state.index]
-    st.subheader(f"🔢 Problem {st.session_state.index + 1} of {len(st.session_state.shuffled_problems)}")
+if st.session_state.index < len(problems):
+    a, b = problems[st.session_state.index]
+    st.subheader(f"🔢 Problem {st.session_state.index + 1} of {len(problems)}")
     st.write(f"What is the GCD of **{a} and {b}**?")
 
     st.info(suggest_method(a, b))  # 👈 Hint display
@@ -75,7 +81,6 @@ else:
     st.write(f"Your score: **{st.session_state.score} / {len(problems)}**")
 
     if st.button("🔁 Start Over"):
-        del st.session_state.shuffled_problems
-        del st.session_state.index
-        del st.session_state.score
+        st.session_state.index = 0
+        st.session_state.score = 0
         st.rerun()
